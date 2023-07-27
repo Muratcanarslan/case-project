@@ -1,6 +1,5 @@
 package com.ets.caseproject.security;
 
-import com.ets.caseproject.security.filters.CustomAuthenticationFilter;
 import com.ets.caseproject.security.filters.CustomAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,14 +35,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter =new CustomAuthenticationFilter(this.authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-        http.authorizeRequests().anyRequest().authenticated();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeRequests().antMatchers("/users/login/**").permitAll();
+      //  http.authorizeRequests().anyRequest().authenticated();
+       // http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

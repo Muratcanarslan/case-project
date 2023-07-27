@@ -3,13 +3,20 @@ package com.ets.caseproject.service.impl;
 import com.ets.caseproject.core.mapping.ModelMapperService;
 import com.ets.caseproject.domain.Role;
 import com.ets.caseproject.domain.User;
+import com.ets.caseproject.domain.dtos.AuthDto;
 import com.ets.caseproject.domain.dtos.UserDto;
 import com.ets.caseproject.domain.dtos.UserRoleDto;
+import com.ets.caseproject.domain.request.LoginRequest;
 import com.ets.caseproject.domain.request.UserSaveRequest;
 import com.ets.caseproject.repository.UserRepository;
 import com.ets.caseproject.service.RoleService;
 import com.ets.caseproject.service.UserService;
+import com.ets.caseproject.util.JwtUtil;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +34,14 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapperService modelMapperService;
     private final RoleService roleService;
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, ModelMapperService modelMapperService, RoleService roleService) {
+    private final AuthenticationManager authenticationManager;
+
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, ModelMapperService modelMapperService, RoleService roleService,@Lazy AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.modelMapperService = modelMapperService;
         this.roleService = roleService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -66,5 +76,19 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers() {
         log.info("getting all users");
         return this.userRepository.findAll().stream().map(user -> this.modelMapperService.forDto().map(user, UserDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public AuthDto login(LoginRequest loginRequest) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword());
+            Authentication authentication = this.authenticationManager.authenticate(authenticationToken);
+            org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+            String token = JwtUtil.generateToken(user);
+            return new AuthDto(token);
+        }catch (Exception e){
+            throw new RuntimeException("Check your credentials! "+ e.getMessage());
+        }
+
     }
 }

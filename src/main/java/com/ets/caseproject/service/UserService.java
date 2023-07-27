@@ -2,8 +2,10 @@ package com.ets.caseproject.service;
 
 import com.ets.caseproject.domain.Role;
 import com.ets.caseproject.domain.User;
+import com.ets.caseproject.domain.dtos.AuthDto;
 import com.ets.caseproject.domain.dtos.UserDto;
 import com.ets.caseproject.domain.dtos.UserRoleDto;
+import com.ets.caseproject.domain.request.LoginRequest;
 import com.ets.caseproject.domain.request.UserSaveRequest;
 
 import java.util.List;
@@ -15,5 +17,7 @@ public interface UserService {
 
     UserDto findUserById(Long id);
     List<UserDto> getUsers();
+
+    AuthDto login(LoginRequest loginRequest);
 }
 
