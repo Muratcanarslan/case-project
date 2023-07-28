@@ -2,6 +2,7 @@ simple file upload system using spring boot and postgre sql.
 
 this project contains 4 controller these are file,user,filetype and role controller and these controllers are documented with swagger.
 
+To use the project, go to the swagger screen and first register via /users/save on the user controller, then log in with this user via /users/login and register the token to swagger.
 
 File Controller
 
