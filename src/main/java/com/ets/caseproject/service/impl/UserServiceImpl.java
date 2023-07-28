@@ -47,8 +47,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto saveUser(UserSaveRequest user) {
         log.info("saving user to database username: {}",user.getUsername());
+        this.checkUserNameIsExists(user.getUsername());
         user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
         return this.modelMapperService.forDto().map(this.userRepository.save(this.modelMapperService.forRequest().map(user,User.class)),UserDto.class);
+    }
+
+    private void checkUserNameIsExists(String username) {
+        if(this.userRepository.existsByUsername(username)){
+            throw new RuntimeException("user name already exists! username : " + username);
+        }
     }
 
     @Override
