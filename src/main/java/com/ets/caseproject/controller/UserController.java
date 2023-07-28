@@ -28,7 +28,7 @@ public class UserController {
         return ResponseEntity.ok().body(this.userService.getUsers());
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<UserDto> saveUser(@RequestBody UserSaveRequest user){
         return ResponseEntity.ok().body(this.userService.saveUser(user));
     }

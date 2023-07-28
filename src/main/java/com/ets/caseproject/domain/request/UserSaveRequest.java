@@ -1,6 +1,5 @@
 package com.ets.caseproject.domain.request;
 
-import com.ets.caseproject.domain.dtos.RoleDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,5 +22,5 @@ public class UserSaveRequest {
     @Size(min = 8,message = "password must be at least 8 characters")
     private String password;
     @NotNull(message = "user can't be roleless")
-    private List<RoleDto> roles;
+    private List<RoleRequest> roles;
 }
